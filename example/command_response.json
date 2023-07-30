@@ -1,0 +1,51 @@
+{
+  "id": "1135088570965688370",
+  "type": 20,
+  "content": "IV% range filter is now 100.0 to 100.",
+  "channel_id": "1132990747793178664",
+  "author": {
+    "id": "322106242048720896",
+    "username": "articuno-bot",
+    "avatar": "60b0b2e722c1aabc2b410df310e2c314",
+    "discriminator": "8205",
+    "public_flags": 65536,
+    "flags": 65536,
+    "bot": true,
+    "banner": null,
+    "accent_color": null,
+    "global_name": null,
+    "avatar_decoration": null,
+    "banner_color": null
+  },
+  "attachments": [],
+  "embeds": [],
+  "mentions": [],
+  "mention_roles": [],
+  "pinned": false,
+  "mention_everyone": false,
+  "tts": false,
+  "timestamp": "2023-07-30T05:56:44.244000+00:00",
+  "edited_timestamp": null,
+  "flags": 0,
+  "components": [],
+  "application_id": "322106242048720896",
+  "interaction": {
+    "id": "1135088569971658822",
+    "type": 2,
+    "name": "pokeset iv",
+    "user": {
+      "id": "972807243412152381",
+      "username": "kingpgc",
+      "avatar": "d914d4af6d26153b189239a8744f0c3a",
+      "discriminator": "0",
+      "public_flags": 0,
+      "flags": 0,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "꧁•⊹٭𝙺𝙸𝙽𝙶٭⊹•꧂",
+      "avatar_decoration": null,
+      "banner_color": null
+    }
+  },
+  "webhook_id": "322106242048720896"
+}

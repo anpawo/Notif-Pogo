@@ -1,0 +1,5 @@
+- help
+    show the help for all commands or one if given 
+
+    Usage:
+        help [$empty | commandName]

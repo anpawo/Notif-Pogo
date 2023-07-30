@@ -1,0 +1,5 @@
+- show
+    show the rules of all pokemons or one if given 
+
+    Usage:
+        show [$empty | pokemonName]

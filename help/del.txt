@@ -1,0 +1,5 @@
+- del
+    delete a rule from a pokemon
+
+    Usage:
+        del pokemonName [$empty | ruleIndex]

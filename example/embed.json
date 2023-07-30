@@ -1,0 +1,25 @@
+[
+  {
+    "type": "rich",
+    "color": 9621258,
+    "timestamp": "2023-07-26T17:07:37.943000+00:00",
+    "fields": [
+      {
+        "name": "<a:exeggutor:584165812491911198> <a:shiny:633733496212422691> **Exeggutor** <:female:633404938633871445> <a:sunny_boosted:662771816183627777> BOOSTED",
+        "value": "<:Iv:633407396655529994> 100.00 (15/15/15) | <:Lv:633407396793942026> 26 | <:Cp:633407396718444574> 2239\n<:Ms:666341610832920607> Extrasensory / Solar Beam\n<:PvP:786790674779209750> UL rank 910 @L29.0\nDespawns *<t:1690392660:R>* (<t:1690392660:T>)\n**🇦🇺** **Oyster Bay**, **New South Wales**, **Australia**",
+        "inline": false
+      }
+    ],
+    "thumbnail": {
+      "url": "https://cdn.discordapp.com/emojis/584165812491911198.gif",
+      "proxy_url": "https://images-ext-1.discordapp.net/external/8KUa4_5zUqzl1WUbTqNKLlc1Ijwz7ODxLrUbLVfDivY/https/cdn.discordapp.com/emojis/584165812491911198.gif",
+      "width": 128,
+      "height": 89
+    },
+    "footer": {
+      "text": "From Matticuno & GrumpiestVulcan w/ love. (v3.4.9)",
+      "icon_url": "https://pogoipa.com/articuno-bot-logo_mini2.png",
+      "proxy_icon_url": "https://images-ext-2.discordapp.net/external/daWakP3QVg9NI9roJFFObRuk0MxOe2axP3X_5vk5r5I/https/pogoipa.com/articuno-bot-logo_mini2.png"
+    }
+  }
+]

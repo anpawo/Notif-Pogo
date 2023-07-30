@@ -10,21 +10,20 @@ from dotenv import dotenv_values
 
 
 CHANNEL: dict = literal_eval(open("data/channel.txt").read())
-SECRET: dict = dotenv_values('.env')
-AUTHORIZATION: str = SECRET['authorization']
+SECRET: dict = dotenv_values(".env")
+AUTHORIZATION: str = SECRET["api_authorization"]
 
 
 def getMsg(name: str, id: str) -> list:
     url = f"https://discord.com/api/v9/channels/{id}/messages?limit=8"
-    headers = {'authorization': AUTHORIZATION}
+    headers = {"authorization": AUTHORIZATION}
     response = requests.get(url, headers=headers)
     try:
         msg = json.loads(response.text)
     except json.decoder.JSONDecodeError:
-        print(f'Error with channel \'{name}\', id: {id}')
+        print(f"Error with channel '{name}', id: {id}")
         return []
     return msg
-
 
 
 def getPkmFromOneChannel(name: str, id: str) -> list[Pokemon]:
@@ -44,9 +43,9 @@ def getPkmFromAllChannel() -> list[Pokemon]:
     return pokemons
 
 
-if __name__ == '__main__':
-    url = f"https://discord.com/api/v9/channels/1073124987088687114/messages?limit=8"
-    headers = {'authorization': AUTHORIZATION}
+if __name__ == "__main__":
+    url = f"https://discord.com/api/v9/channels/991551611677708368/messages?limit=2"
+    headers = {"authorization": AUTHORIZATION}
     response = requests.get(url, headers=headers)
     msg = json.loads(response.text)
     print(msg)

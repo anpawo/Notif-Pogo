@@ -1,0 +1,1 @@
+{'axew': 35, 'chansey': 35, 'clauncher': 35, 'crabrawler': 35, 'cranidos': 35, 'darumaka': 35, 'ditto': 0, 'farfetchd': 30, 'gligar': 0, 'golett': 30, 'klink': 0, 'larvesta': 0, 'onix': 35, 'pikachu': 0, 'ponytagalar': 0, 'pupitar': 0, 'rufflet': 35, 'sandygast': 0, 'seadra': 30, 'shellos': 30, 'timburr': 0, 'unown': 0, 'vullaby': 0, 'zorua': 30}

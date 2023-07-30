@@ -1,0 +1,79 @@
+{
+  "id": "1133871063206473820",
+  "type": 0,
+  "content": "",
+  "channel_id": "991551611677708368",
+  "author": {
+    "id": "1028276303159377980",
+    "username": "Pokemon GO Coordinates",
+    "avatar": "60b0b2e722c1aabc2b410df310e2c314",
+    "discriminator": "0000",
+    "public_flags": 0,
+    "flags": 0,
+    "bot": true
+  },
+  "attachments": [],
+  "embeds": [
+    {
+      "type": "rich",
+      "color": 13093953,
+      "timestamp": "2023-07-26T21:18:47.654000+00:00",
+      "fields": [
+        {
+          "name": "<a:zigzagoon_galarian:842494408914108446> <a:shiny:633733496212422691> **Zigzagoon** **(Galarian)** <:male:633405392944234496>",
+          "value": "<:Iv:633407396655529994> ? (0/0/0) | <:Lv:633407396793942026> 1 | <:Cp:633407396718444574> 10\n<:Ms:666341610832920607> Tackle / Dig\nDespawns *<t:1690407708:R>* (<t:1690407708:T>)\n**🇦🇺** **Jeju City**, **Jeju Do**, **South Korea**",
+          "inline": false
+        }
+      ],
+      "thumbnail": {
+        "url": "https://cdn.discordapp.com/emojis/842494408914108446.gif",
+        "proxy_url": "https://images-ext-2.discordapp.net/external/bo6klr3whCi8Pq9UZjbOX9_aSe3OQ_XW2LfJCl74KQE/https/cdn.discordapp.com/emojis/842494408914108446.gif",
+        "width": 54,
+        "height": 43
+      },
+      "footer": {
+        "text": "From Matticuno & GrumpiestVulcan w/ love. (v3.4.9)",
+        "icon_url": "https://pogoipa.com/articuno-bot-logo_mini2.png",
+        "proxy_icon_url": "https://images-ext-2.discordapp.net/external/daWakP3QVg9NI9roJFFObRuk0MxOe2axP3X_5vk5r5I/https/pogoipa.com/articuno-bot-logo_mini2.png"
+      }
+    }
+  ],
+  "mentions": [],
+  "mention_roles": [],
+  "pinned": false,
+  "mention_everyone": false,
+  "tts": false,
+  "timestamp": "2023-07-26T21:18:47.774000+00:00",
+  "edited_timestamp": null,
+  "flags": 0,
+  "components": [
+    {
+      "type": 1,
+      "components": [
+        {
+          "type": 2,
+          "custom_id": "cuno_btn:v1:reveal:Agr4AnnlF1APdIksAum5PMqKpviASM0vaVqElhWkBNtwhvO0jAiUXRSLZPEyVo4PjakI",
+          "style": 1,
+          "label": "Reveal",
+          "emoji": { "name": "🔍" }
+        },
+        {
+          "type": 2,
+          "style": 5,
+          "label": "Community",
+          "emoji": { "name": "❤️" },
+          "url": "https://www.patreon.com/join/pogocoordinates"
+        },
+        {
+          "type": 2,
+          "style": 5,
+          "label": "Support",
+          "emoji": { "id": "605445245793992704", "name": "cuno" },
+          "url": "https://discord.com/invite/KMqMN23"
+        }
+      ]
+    }
+  ],
+  "application_id": "322106242048720896",
+  "webhook_id": "1028276303159377980"
+}

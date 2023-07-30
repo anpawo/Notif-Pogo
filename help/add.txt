@@ -1,0 +1,15 @@
+- add
+    add a rule to a pokemon
+
+    Usage:
+        add Criteria1 [Args1, Args2] Criteria2 [Args1]
+
+    criteria:
+        avoid: boolean (makes the rule inescapable)
+        fe: boolean (fully evolved)
+        lvl: [>, <, =] integer[0-35] 
+        cp: [>, <, =] integer[0-10000] 
+        iv: [>, <, =] integer[0-100] | integer/integer/integer (atk/def/hp)[0-15]
+        size: [xxs, xxl]
+        gender: [male, female]
+        country: countryName
