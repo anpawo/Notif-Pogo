@@ -5,11 +5,12 @@
         add Criteria1 [Args1, Args2] Criteria2 [Args1]
 
     criteria:
-        avoid: boolean (makes the rule inescapable)
+        avoid: boolean (can't be used in the "all" rules, avoid a pokemon)
+        catch: boolean (can only be used in the "all" rules, bypass another rule that would avoid the pokemon)
         fe: boolean (fully evolved)
-        lvl: [>, <, =] integer[0-35] 
-        cp: [>, <, =] integer[0-10000] 
-        iv: [>, <, =] integer[0-100] | integer/integer/integer (atk/def/hp)[0-15]
-        size: [xxs, xxl]
-        gender: [male, female]
+        lvl: [> | < | =, integer]
+        cp:  [> | < | =, integer]
+        iv:  [> | < | =, integer] | [integer/integer/integer] (atk/def/hp)[0-15]
+        size: [xxs | xxl | any]
+        gender: [male | female]
         country: countryName

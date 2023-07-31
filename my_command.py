@@ -5,16 +5,6 @@ from __future__ import annotations
 from pkm import *
 
 
-ERRORS = {
-    "cmdName": "Invalid Command Name '{name}'",
-    "pkmName": "Invalid Pokemon Name '{name}'",
-    "criteria": "Invalid Criteria Name '{name}'",
-    "missing": "Missing Argument '{name}'",
-    "value": "Invalid Value '{name}' expected '{value}'",
-    "repetition": "Too Many Criteria '{name}'",
-}
-
-
 CRITERIAS = {
     "avoid",
     "catch",
@@ -28,44 +18,42 @@ CRITERIAS = {
 }
 
 
-def ruleRespected(rule: dict, pokemon: Pokemon, forAllRule: bool) -> int:
-    keepPokemon = 1
+def ruleRespected(rule: dict, pokemon: Pokemon) -> bool:
+    if "avoid" in rule:
+        return False
+    if "iv" not in rule and pokemon.iv != 100:
+        return False
     for criteria in rule:
         if criteria == "fe":
             if not isFullyEvolved(pokemon):
-                keepPokemon = 0
-        elif criteria in ["size", "country", "gender"]:
-            if getattr(pokemon, criteria) != rule[criteria]:  # here
-                keepPokemon = 0
+                return False
+        elif criteria == "size":
+            if rule[criteria] == "any":
+                if getattr(pokemon, criteria) == "":
+                    return False
+            elif getattr(pokemon, criteria) != rule[criteria]:
+                return False
+        elif criteria in ["country", "gender"]:
+            if getattr(pokemon, criteria) != rule[criteria]:
+                return False
         elif criteria in ["iv", "lvl", "cp"]:
             if criteria == "iv" and "/" in rule[criteria]:
                 if pokemon.ivs != rule[criteria]:
-                    keepPokemon = 0
+                    return False
             else:
                 value = getattr(pokemon, criteria)
                 expected_value = rule[criteria][1]
                 operator = rule[criteria][0]
                 if operator == "=":
                     if value != expected_value:
-                        keepPokemon = 0
+                        return False
                 elif operator == "<":
                     if value > expected_value:
-                        keepPokemon = 0
+                        return False
                 elif operator == ">":
                     if value < expected_value:
-                        keepPokemon = 0
-    if "avoid" in rule and len(rule) == 1:
-        return -1
-    if (
-        "avoid" not in rule
-        and keepPokemon == 0
-        and "catch" not in rule
-        and not forAllRule
-    ):
-        return -1
-    if "catch" in rule and keepPokemon == 1:
-        return 2
-    return keepPokemon
+                        return False
+    return True
 
 
 async def applyRules(bot, pokemons: list[Pokemon]) -> None:
@@ -75,25 +63,28 @@ async def applyRules(bot, pokemons: list[Pokemon]) -> None:
     while index < len(pokemons):
         pokemon = pokemons[index]
         keepPokemon = 0
-        for name in ["all", pokemon.name]:
-            if name in bot.rules:
-                for rule in bot.rules[name]:
-                    result = ruleRespected(rule, pokemon, name == "all")
-                    if "iv" not in rule and pokemon.iv != 100:
-                        result = 0
-                    if keepPokemon == -1 and result != 2:
-                        continue
+        if "all" in bot.rules:
+            for rule in bot.rules["all"]:
+                if ruleRespected(rule=rule, pokemon=pokemon):
+                    if "catch" in rule:
+                        keepPokemon = 2
+                        break
                     else:
-                        if result == -1:
-                            keepPokemon = -1
-                        if result == 1:
-                            keepPokemon = 1
-                        if result == 2:
-                            keepPokemon = 2
-                            break
-            if keepPokemon == 2:
-                break
-        if keepPokemon < 1:
+                        keepPokemon = 1
+        if keepPokemon == 2:
+            index += 1
+            continue
+        if pokemon.name in bot.rules:
+            keepPokemon = 0
+            if not (
+                len(bot.rules[pokemon.name]) == 1
+                and "avoid" in bot.rules[pokemon.name][0]
+            ):
+                for rule in bot.rules[pokemon.name]:
+                    if ruleRespected(rule=rule, pokemon=pokemon):
+                        keepPokemon = 1
+                        break
+        if keepPokemon == 0:
             if pokemon.snowflake != None:
                 message = await bot.channel.fetch_message(
                     bot.pokemonQueue[index].snowflake
@@ -104,13 +95,24 @@ async def applyRules(bot, pokemons: list[Pokemon]) -> None:
             index += 1
 
 
-def addCriteria(args: list[str], index: int, newRule: dict[str:any]) -> tuple[str, int]:
+def addCriteria(
+    args: list[str], index: int, newRule: dict[str:any], isAllRule: bool
+) -> tuple[str, int]:
+    if "avoid" in newRule:
+        return "the 'avoid' criteria can only be alone in a rule", 0
     criteria = args[index].lower()
     if criteria not in CRITERIAS:
         return makeError("criteria", name=args[index]), 0
     if criteria in newRule:
         return makeError("repetition", name=args[index]), 0
     if criteria in ["avoid", "fe", "catch"]:
+        if criteria == "avoid":
+            if isAllRule:
+                return makeError("avoid"), 0
+            if len(newRule) != 0:
+                return "the 'avoid' criteria can only be alone in a rule", 0
+        if criteria == "catch" and not isAllRule:
+            return makeError("catch"), 0
         newRule[criteria] = True
         return "", 1
     elif criteria in ["lvl", "iv", "cp"]:
@@ -126,8 +128,8 @@ def addCriteria(args: list[str], index: int, newRule: dict[str:any]) -> tuple[st
         newRule[criteria] = [symbol, value]
         return "", 3
     elif criteria == "size":
-        if args[index + 1].lower() not in ["xxs", "xxl"]:
-            return makeError("value", name=args[index + 1], value="xxs, xxl"), 0
+        if args[index + 1].lower() not in ["any", "xxs", "xxl"]:
+            return makeError("value", name=args[index + 1], value="any, xxs, xxl"), 0
         newRule[criteria] = args[index + 1].lower()
         return "", 2
     elif criteria == "country":
@@ -145,33 +147,34 @@ def rewriteRules(bot) -> None:
         file.write(json.dumps(bot.rules))
 
 
-async def addCommand(args: list[str], bot) -> str:
-    pokemonName = formatName(args[0])
-    if pokemonName not in DEX and pokemonName != "all":
+async def addRule(args: list[str], bot) -> str:
+    ruleName = formatName(args[0])
+    if ruleName not in DEX and ruleName != "all":
         return makeError("pkmName", name=args[0])
+    isAllRule = ruleName == "all"
     newRule: dict = {}
     index = 1
     while index < len(args):
-        error, indexIncrement = addCriteria(args, index, newRule)
+        error, indexIncrement = addCriteria(args, index, newRule, isAllRule)
         if error:
             return error
         index += indexIncrement
-    if pokemonName not in bot.rules:
-        bot.rules[pokemonName] = []
+    if ruleName not in bot.rules:
+        bot.rules[ruleName] = []
     if "avoid" in newRule and len(newRule) > 1:
         newRule["avoid"] = False
-    bot.rules[pokemonName].append(newRule)
+    bot.rules[ruleName].append(newRule)
     rewriteRules(bot)
     await applyRules(bot, bot.pokemonQueue)
-    return f"{pokemonName} {bot.rules[pokemonName]}"
+    return ""
 
 
-async def delCommand(args: list[str], bot) -> str:
+async def delRule(args: list[str], bot) -> str:
     pokemonName = formatName(args[0])
     if pokemonName not in DEX and pokemonName != "all":
         return makeError("pkmName", name=args[0])
     if len(args) == 1:
-        bot.rules[pokemonName].clear()
+        del bot.rules[pokemonName]
     else:
         try:
             index = int(args[1])
@@ -189,7 +192,7 @@ async def delCommand(args: list[str], bot) -> str:
     return ""
 
 
-async def showCommand(args: list[str], bot) -> str:
+async def showRule(args: list[str], bot) -> str:
     pokemonName = "." if len(args) == 0 else formatName(args[0])
     output = ""
     if pokemonName == ".":
@@ -200,9 +203,9 @@ async def showCommand(args: list[str], bot) -> str:
                 output += f"{DEX[pkm]['name']}:\n"
             for rule in bot.rules[pkm]:
                 output += f"\t{rule}\n"
-        output += f"all:\n"
+        output += f"\nall:"
         for rule in bot.rules["all"]:
-            output += f"\t{rule}\n"
+            output += f"\n\t{rule}"
         if output == "":
             return "No rules made any pokemon"
     elif pokemonName == "all":
@@ -222,7 +225,7 @@ async def showCommand(args: list[str], bot) -> str:
     return output
 
 
-async def helpCommand(args: list[str], bot) -> str:
+async def helpRule(args: list[str], bot) -> str:
     if len(args) == 0:
         output = "⏤" * 50 + "\n\n"
         for cmd in COMMANDS:
@@ -236,6 +239,18 @@ async def helpCommand(args: list[str], bot) -> str:
         return open(f"help/{commandName}.txt").read()
 
 
+ERRORS = {
+    "cmdName": "Invalid Command Name: '{name}'",
+    "pkmName": "Invalid Pokemon Name: '{name}'",
+    "criteria": "Invalid Criteria Name: '{name}'",
+    "missing": "Missing Argument '{name}'",
+    "value": "Invalid Value '{name}' expected '{value}'",
+    "repetition": "Too Many Criteria '{name}'",
+    "avoid": "The 'all' rule cannot have the 'avoid' criteria in it.",
+    "catch": "The 'catch' criteria can only be in the 'all' rule",
+}
+
+
 def makeError(errorName: str, **customParameter) -> str:
     newError = (
         "Error: " + ERRORS[errorName].format(**customParameter) + "\n'help' for help"
@@ -244,10 +259,10 @@ def makeError(errorName: str, **customParameter) -> str:
 
 
 COMMANDS = {
-    "add": addCommand,
-    "del": delCommand,
-    "show": showCommand,
-    "help": helpCommand,
+    "add": addRule,
+    "del": delRule,
+    "show": showRule,
+    "help": helpRule,
 }
 
 

@@ -26,13 +26,24 @@ def makeEmbed(pkm: Pokemon) -> Embed:
         "genderless": "<:genderless:1134911468123472024>",
     }
     embed = Embed(
-        title=f"{DEX[pkm.name]['name']} {gender_icon[pkm.gender]} {pkm.size}",
+        title=f"{DEX[pkm.name]['name']} {gender_icon[pkm.gender]} {pkm.size.upper()}",
         description=f"**cp** {pkm.cp}\n**lvl** {pkm.lvl}\n**ivs**: {pkm.ivs}\n**country**: {pkm.country}\n\
         **despawn** <t:{pkm.despawn}:R> (<t:{pkm.despawn}:T>)\n[Link]({pkm.urlMessage})",
         color=0xFF0000 if (pkm.lvl == 35 or pkm.size) else 0x00FF00,
     )
     embed.set_thumbnail(url=pkm.thumb)
     return embed
+
+
+def splitMessage(message: str) -> list[str]:
+    maxLength = 1950
+    messageParts = []
+    if len(message) < maxLength:
+        messageParts.append(message)
+    else:
+        for i in range(0, len(message), maxLength):
+            messageParts.append(message[i : i + maxLength])
+    return messageParts
 
 
 class pogoBot:
@@ -57,9 +68,11 @@ class pogoBot:
     async def send(self, message: str):
         if message == "":
             return None
+        messageParts = splitMessage(message)
         expire = time() + 40
-        messageId = (await self.channel.send(f"```{message}```")).id
-        self.messageToDelete[messageId] = expire
+        for part in messageParts:
+            messageId = (await self.channel.send(f"```{part}```")).id
+            self.messageToDelete[messageId] = expire
 
     async def deleteOutdatedMessage(self) -> None:
         timeNow = time()
