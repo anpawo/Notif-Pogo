@@ -143,6 +143,7 @@ def addCriteria(
 
 
 def rewriteRules(bot) -> None:
+    bot.rules = dict(sorted(bot.rules.items()))
     with open("data/rules.json", "w") as file:
         file.write(json.dumps(bot.rules))
 
@@ -173,7 +174,7 @@ async def delRule(args: list[str], bot) -> str:
     pokemonName = formatName(args[0])
     if pokemonName not in DEX and pokemonName != "all":
         return makeError("pkmName", name=args[0])
-    if len(args) == 1:
+    if len(args) == 1 or len(bot.rules[pokemonName]) == 1:
         del bot.rules[pokemonName]
     else:
         try:
@@ -192,22 +193,40 @@ async def delRule(args: list[str], bot) -> str:
     return ""
 
 
-async def showRule(args: list[str], bot) -> str:
+def makeMessagePart(bot) -> list[str]:
+    maxLength = 1950
+    messagePart = []
+    currentPart = "\n"
+    for pokemon in bot.rules:
+        if pokemon == "all":
+            continue
+        temp = DEX[pokemon]["name"]
+        if len(bot.rules[pokemon]) == 1:
+            space = " " * (20 - len(temp))
+            temp += space + str(bot.rules[pokemon][0]) + "\n"
+        else:
+            temp += "\n"
+            space = " " * 6
+            for rule in bot.rules[pokemon]:
+                temp += space + str(rule) + "\n"
+        if len(currentPart) + len(temp) > maxLength:
+            messagePart.append(currentPart)
+            currentPart = "\n"
+        currentPart += temp
+    messagePart.append(currentPart)
+    temp = "\nAll\n"
+    for rule in bot.rules["all"]:
+        temp += " " * 6 + str(rule) + "\n"
+    temp += "\n"
+    messagePart.append(temp)
+    return messagePart
+
+
+async def showRule(args: list[str], bot) -> str | list[str]:
     pokemonName = "." if len(args) == 0 else formatName(args[0])
     output = ""
     if pokemonName == ".":
-        for pkm in bot.rules:
-            if pkm == "all":
-                continue
-            else:
-                output += f"{DEX[pkm]['name']}:\n"
-            for rule in bot.rules[pkm]:
-                output += f"\t{rule}\n"
-        output += f"\nall:"
-        for rule in bot.rules["all"]:
-            output += f"\n\t{rule}"
-        if output == "":
-            return "No rules made any pokemon"
+        return makeMessagePart(bot)
     elif pokemonName == "all":
         if "all" not in bot.rules:
             return f"No rules for 'all'"
@@ -266,7 +285,7 @@ COMMANDS = {
 }
 
 
-async def executeCommand(args: list[str], bot) -> str:
+async def executeCommand(args: list[str], bot) -> str | list[str]:
     commandName = args[0].lower()
     if commandName not in COMMANDS:
         if commandName[0] == "!" and formatName(commandName) in DEX:

@@ -29,7 +29,7 @@ def makeEmbed(pkm: Pokemon) -> Embed:
         title=f"{DEX[pkm.name]['name']} {gender_icon[pkm.gender]} {pkm.size.upper()}",
         description=f"**cp** {pkm.cp}\n**lvl** {pkm.lvl}\n**ivs**: {pkm.ivs}\n**country**: {pkm.country}\n\
         **despawn** <t:{pkm.despawn}:R> (<t:{pkm.despawn}:T>)\n[Link]({pkm.urlMessage})",
-        color=0xFF0000 if (pkm.lvl == 35 or pkm.size) else 0x00FF00,
+        color=(0xFF0000 if (pkm.lvl == 35) else 0x00FF00),
     )
     embed.set_thumbnail(url=pkm.thumb)
     return embed
@@ -65,10 +65,13 @@ class pogoBot:
         if messageCounter == 100:
             await self.clearChannel()
 
-    async def send(self, message: str):
-        if message == "":
-            return None
-        messageParts = splitMessage(message)
+    async def send(self, message: str | list[str]):
+        if isinstance(message, str):
+            if message == "":
+                return None
+            messageParts = [message]
+        else:
+            messageParts = message
         expire = time() + 40
         for part in messageParts:
             messageId = (await self.channel.send(f"```{part}```")).id
@@ -77,7 +80,7 @@ class pogoBot:
     async def deleteOutdatedMessage(self) -> None:
         timeNow = time()
         keysToDelete = []
-        for messageId in self.messageToDelete:  # change to index for no crash
+        for messageId in list(self.messageToDelete.keys()):
             if self.messageToDelete[messageId] < timeNow:
                 message = await self.channel.fetch_message(messageId)
                 await message.delete()
