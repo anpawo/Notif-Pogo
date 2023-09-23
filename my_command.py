@@ -136,7 +136,7 @@ def addCriteria(
         newRule[criteria] = args[index + 1]
         return "", 2
     elif criteria == "gender":
-        if args[index + 1] not in ["male, female", "genderless"]:
+        if args[index + 1] not in ["male", "female", "genderless"]:
             return makeError("value", name=args[index + 1], value="male, female"), 0
         newRule[criteria] = args[index + 1]
         return "", 2
@@ -149,10 +149,10 @@ def rewriteRules(bot) -> None:
 
 
 async def addRule(args: list[str], bot) -> str:
-    ruleName = formatName(args[0])
-    if ruleName not in DEX and ruleName != "all":
+    pokemonName = formatName(args[0])
+    if pokemonName not in DEX and pokemonName != "all":
         return makeError("pkmName", name=args[0])
-    isAllRule = ruleName == "all"
+    isAllRule = pokemonName == "all"
     newRule: dict = {}
     index = 1
     while index < len(args):
@@ -160,11 +160,13 @@ async def addRule(args: list[str], bot) -> str:
         if error:
             return error
         index += indexIncrement
-    if ruleName not in bot.rules:
-        bot.rules[ruleName] = []
-    if "avoid" in newRule and len(newRule) > 1:
-        newRule["avoid"] = False
-    bot.rules[ruleName].append(newRule)
+    if pokemonName not in bot.rules:
+        bot.rules[pokemonName] = []
+    else:
+        for rule in bot.rules[pokemonName]:
+            if rule == newRule:
+                return ""
+    bot.rules[pokemonName].append(newRule)
     rewriteRules(bot)
     await applyRules(bot, bot.pokemonQueue)
     return ""
@@ -175,7 +177,8 @@ async def delRule(args: list[str], bot) -> str:
     if pokemonName not in DEX and pokemonName != "all":
         return makeError("pkmName", name=args[0])
     if len(args) == 1 or len(bot.rules[pokemonName]) == 1:
-        del bot.rules[pokemonName]
+        if pokemonName in bot.rules:
+            del bot.rules[pokemonName]
     else:
         try:
             index = int(args[1])
