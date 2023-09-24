@@ -148,12 +148,12 @@ def addCriteria(
         return "", 2
 
 
-def rewriteRules(bot) -> None:
+def rewriteRules(bot, pokemonUpdated: str) -> None:
     bot.rules = dict(sorted(bot.rules.items()))
     with open("data/rules.json", "w") as file:
         file.write(json.dumps(bot.rules))
     subprocess.call(["git", "add", "."])
-    subprocess.call(["git", "commit", "-m", "[update] data"])
+    subprocess.call(["git", "commit", "-m", f"[update] {pokemonUpdated}"])
     subprocess.call(["git", "push"])
 
 
@@ -176,7 +176,7 @@ async def addRule(args: list[str], bot) -> str:
             if rule == newRule:
                 return ""
     bot.rules[pokemonName].append(newRule)
-    rewriteRules(bot)
+    rewriteRules(bot, pokemonName)
     await applyRules(bot, bot.pokemonQueue)
     return ""
 
@@ -200,7 +200,7 @@ async def delRule(args: list[str], bot) -> str:
                 "value", name=index, value=f"0-{len(bot.rules[pokemonName]) - 1}"
             )
         del bot.rules[pokemonName][index]
-    rewriteRules(bot)
+    rewriteRules(bot, pokemonName)
     await applyRules(bot, bot.pokemonQueue)
     return ""
 
