@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 from pkm import *
+import subprocess
 
 
 CRITERIAS = {
@@ -151,6 +152,9 @@ def rewriteRules(bot) -> None:
     bot.rules = dict(sorted(bot.rules.items()))
     with open("data/rules.json", "w") as file:
         file.write(json.dumps(bot.rules))
+    subprocess.call(["git", "add", "."])
+    subprocess.call(["git", "commit", "-m", "[update] data"])
+    subprocess.call(["git", "push"])
 
 
 async def addRule(args: list[str], bot) -> str:
