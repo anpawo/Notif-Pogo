@@ -21,6 +21,8 @@ class Pokemon:
         self.despawn: int
         self.thumbnail: str
         self.country: str
+        self.quickmove: str
+        self.chargedmove: str
         self.snowflake = None
 
     def __str__(self) -> str:

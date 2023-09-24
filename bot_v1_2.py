@@ -27,8 +27,7 @@ def makeEmbed(pkm: Pokemon) -> Embed:
     }
     embed = Embed(
         title=f"{DEX[pkm.name]['name']} {gender_icon[pkm.gender]} {pkm.size.upper()}",
-        description=f"**cp** {pkm.cp}\n**lvl** {pkm.lvl}\n**ivs**: {pkm.ivs}\n**country**: {pkm.country}\n\
-        **despawn** <t:{pkm.despawn}:R> (<t:{pkm.despawn}:T>)\n[Link]({pkm.urlMessage})",
+        description=f"**cp** {pkm.cp}\n**lvl** {pkm.lvl}\n**ivs** {pkm.ivs}\n**move** {pkm.quickmove} / {pkm.chargedmove}\n**Country** {pkm.country}\n**Despawn** <t:{pkm.despawn}:R> (<t:{pkm.despawn}:T>)\n**[Link]({pkm.urlMessage})**",
         color=(0xFF0000 if (pkm.lvl == 35) else 0x00FF00),
     )
     embed.set_thumbnail(url=pkm.thumb)

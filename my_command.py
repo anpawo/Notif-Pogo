@@ -15,6 +15,8 @@ CRITERIAS = {
     "size",
     "country",
     "gender",
+    "quickmove",
+    "chargedmove",
 }
 
 
@@ -33,8 +35,11 @@ def ruleRespected(rule: dict, pokemon: Pokemon) -> bool:
                     return False
             elif getattr(pokemon, criteria) != rule[criteria]:
                 return False
-        elif criteria in ["country", "gender"]:
-            if getattr(pokemon, criteria) != rule[criteria]:
+        elif criteria in ["country", "gender", "quickmove", "chargedmove"]:
+            if (
+                getattr(pokemon, criteria).replace(" ", "").lower()
+                != rule[criteria].replace("", "").lower()
+            ):
                 return False
         elif criteria in ["iv", "lvl", "cp"]:
             if criteria == "iv" and "/" in rule[criteria]:
@@ -132,13 +137,13 @@ def addCriteria(
             return makeError("value", name=args[index + 1], value="any, xxs, xxl"), 0
         newRule[criteria] = args[index + 1].lower()
         return "", 2
-    elif criteria == "country":
-        newRule[criteria] = args[index + 1]
-        return "", 2
     elif criteria == "gender":
         if args[index + 1] not in ["male", "female", "genderless"]:
             return makeError("value", name=args[index + 1], value="male, female"), 0
         newRule[criteria] = args[index + 1]
+        return "", 2
+    else:
+        newRule[criteria] = args[index + 1].lower()
         return "", 2
 
 

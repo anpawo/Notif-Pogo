@@ -38,6 +38,16 @@ def parseMessage(msg: dict) -> Pokemon:
     pkm.despawn = int(value[value.index("Despawns") + 1][4:-4])
     pkm.thumb = embed["thumbnail"]["url"]
     pkm.country = formatName(embed["fields"][0]["value"].split("*")[-7])
+    try:
+        pkm.quickmove, pkm.chargedmove = (
+            embed["fields"][0]["value"]
+            .split("<:Ms:")[1]
+            .split("\n")[0]
+            .split("> ")[1]
+            .split(" / ")
+        )
+    except:
+        pass
     return pkm
 
 
