@@ -299,6 +299,13 @@ COMMANDS = {
 
 async def executeCommand(args: list[str], bot) -> str | list[str]:
     commandName = args[0].lower()
+    if len(args) == 1:
+        if commandName == "!":
+            return await COMMANDS["add"]([bot.findNameNewestPokemon(), "avoid"], bot)
+        else:
+            return await COMMANDS[commandName](
+                [bot.findNameNewestPokemon()] + args, bot
+            )
     if commandName not in COMMANDS:
         if commandName[0] == "!" and formatName(commandName) in DEX:
             return await COMMANDS["add"]([formatName(commandName), "avoid"], bot)

@@ -24,6 +24,7 @@ class Pokemon:
         self.quickmove: str
         self.chargedmove: str
         self.snowflake = None
+        self.sendDate: int
 
     def __str__(self) -> str:
         string = ""
@@ -37,7 +38,7 @@ class Pokemon:
     def __eq__(self, other) -> bool:
         if isinstance(other, Pokemon):
             for attr in vars(self):
-                if attr in ["urlMessage", "snowflake"]:
+                if attr in ["urlMessage", "snowflake", "sendDate"]:
                     continue
                 if getattr(self, attr) != getattr(other, attr):
                     return False

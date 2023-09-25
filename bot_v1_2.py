@@ -118,6 +118,9 @@ class pogoBot:
         for pokemon in newPokemon:
             pokemon.snowflake = (await self.channel.send(embed=makeEmbed(pokemon))).id
 
+    def findNameNewestPokemon(self) -> str:
+        return self.pokemonQueue[-1].name
+
     async def update(self) -> None:
         newPokemon = getPkmFromAllChannel()
         self.deleteDouble(newPokemon)
