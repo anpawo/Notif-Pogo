@@ -119,6 +119,8 @@ class pogoBot:
             pokemon.snowflake = (await self.channel.send(embed=makeEmbed(pokemon))).id
 
     def findNameNewestPokemon(self) -> str:
+        if len(self.pokemonQueue) == 0:
+            return "error"
         return self.pokemonQueue[-1].name
 
     async def update(self) -> None:
