@@ -141,6 +141,9 @@ async def scrapUpdate():
     await bot.update()
 
 
+# loop 1h here
+
+
 @bot.client.event
 async def on_ready() -> None:
     bot.startChannel()

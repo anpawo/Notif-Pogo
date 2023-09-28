@@ -21,8 +21,8 @@ class Pokemon:
         self.despawn: int
         self.thumbnail: str
         self.country: str
-        self.quickmove: str
-        self.chargedmove: str
+        self.quickmove = ""
+        self.chargedmove = ""
         self.snowflake = None
         self.sendDate: int
 

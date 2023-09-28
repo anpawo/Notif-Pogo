@@ -185,9 +185,10 @@ async def delRule(args: list[str], bot) -> str:
     pokemonName = formatName(args[0])
     if pokemonName not in DEX and pokemonName != "all":
         return makeError("pkmName", name=args[0])
-    if len(args) == 1 or len(bot.rules[pokemonName]) == 1:
-        if pokemonName in bot.rules:
-            del bot.rules[pokemonName]
+    if pokemonName not in bot.rules:
+        return ""
+    if len(args) == 1:
+        del bot.rules[pokemonName]
     else:
         try:
             index = int(args[1])
@@ -200,6 +201,8 @@ async def delRule(args: list[str], bot) -> str:
                 "value", name=index, value=f"0-{len(bot.rules[pokemonName]) - 1}"
             )
         del bot.rules[pokemonName][index]
+        if len(bot.rules[pokemonName]) == 0:
+            del bot.rules[pokemonName]
     rewriteRules(bot, pokemonName)
     await applyRules(bot, bot.pokemonQueue)
     return ""
