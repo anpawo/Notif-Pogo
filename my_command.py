@@ -304,7 +304,10 @@ async def executeCommand(args: list[str], bot) -> str | list[str]:
     commandName = args[0].lower()
     if len(args) == 1:
         if commandName == "!":
-            return await COMMANDS["add"]([bot.findNameNewestPokemon(), "avoid"], bot)
+            newestPokemon = bot.findNameNewestPokemon()
+            COMMANDS["del"]([newestPokemon], bot)
+            COMMANDS["add"]([bot.findNameNewestPokemon(), "avoid"], bot)
+            return ""
         else:
             return await COMMANDS[commandName](
                 [bot.findNameNewestPokemon()] + args, bot
