@@ -154,7 +154,6 @@ def rewriteRules(bot, pokemonUpdated: str) -> None:
         file.write(json.dumps(bot.rules))
 
 
-
 async def addRule(args: list[str], bot) -> str:
     pokemonName = formatName(args[0])
     if pokemonName not in DEX and pokemonName != "all":
@@ -301,10 +300,11 @@ COMMANDS = {
 async def executeCommand(args: list[str], bot) -> str | list[str]:
     args = [element.lower() for element in args]
     if args[0][0] == "!":
-        await COMMANDS["del"]([bot.findNameNewestPokemon()], bot)
         if args[0] == "!":
+            await COMMANDS["del"]([bot.findNameNewestPokemon()], bot)
             return await COMMANDS["add"]([bot.findNameNewestPokemon(), "avoid"], bot)
         else:
+            await COMMANDS["del"]([args[0][1:]], bot)
             return await COMMANDS["add"]([args[0][1:], "avoid"], bot)
     elif args[0][0] == "?":
         if args[0] == "?":
