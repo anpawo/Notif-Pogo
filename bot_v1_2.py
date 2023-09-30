@@ -52,6 +52,7 @@ class pogoBot:
         self.pokemonQueue: list[Pokemon] = []
         self.messageToDelete: dict[int:int] = {}  # id / dsp date
         self.rules: dict[str : list[dict]] = json.load(open("data/rules.json"))
+        self.rulesChanged = False
 
     def startChannel(self) -> None:
         self.channel = self.client.get_channel(CHANNEL_ID)
@@ -141,7 +142,13 @@ async def scrapUpdate():
     await bot.update()
 
 
-# loop 1h here
+@tasks.loop(minutes=60)
+async def updateGithub():
+    if bot.rulesChanged:
+        subprocess.call(["git", "add", "."])
+        subprocess.call(["git", "commit", "-m", f"[update rules]"])
+        subprocess.call(["git", "push"])
+        bot.rulesChanged = False
 
 
 @bot.client.event

@@ -152,9 +152,7 @@ def rewriteRules(bot, pokemonUpdated: str) -> None:
     bot.rules = dict(sorted(bot.rules.items()))
     with open("data/rules.json", "w") as file:
         file.write(json.dumps(bot.rules))
-    subprocess.call(["git", "add", "."])
-    subprocess.call(["git", "commit", "-m", f"[update] {pokemonUpdated}"])
-    subprocess.call(["git", "push"])
+
 
 
 async def addRule(args: list[str], bot) -> str:
@@ -301,22 +299,19 @@ COMMANDS = {
 
 
 async def executeCommand(args: list[str], bot) -> str | list[str]:
-    commandName = args[0].lower()
-    if len(args) == 1:
-        if commandName == "!":
-            newestPokemon = bot.findNameNewestPokemon()
-            COMMANDS["del"]([newestPokemon], bot)
-            COMMANDS["add"]([bot.findNameNewestPokemon(), "avoid"], bot)
-            return ""
+    args = [element.lower() for element in args]
+    if args[0][0] == "!":
+        await COMMANDS["del"]([bot.findNameNewestPokemon()], bot)
+        if args[0] == "!":
+            return await COMMANDS["add"]([bot.findNameNewestPokemon(), "avoid"], bot)
         else:
-            return await COMMANDS[commandName](
-                [bot.findNameNewestPokemon()] + args, bot
-            )
-    if commandName not in COMMANDS:
-        if commandName[0] == "!" and formatName(commandName) in DEX:
-            return await COMMANDS["add"]([formatName(commandName), "avoid"], bot)
-        elif commandName == "all" or formatName(commandName) in DEX:
-            return await COMMANDS["add"](args, bot)
+            return await COMMANDS["add"]([args[0][1:], "avoid"], bot)
+    elif args[0][0] == "?":
+        if args[0] == "?":
+            return await COMMANDS["show"]([bot.findNameNewestPokemon()], bot)
         else:
-            return makeError("cmdName", name=args[0])
-    return await COMMANDS[commandName](args[1:], bot)
+            return await COMMANDS["show"]([args[0][1:]], bot)
+    elif args[0] in DEX or args[0] == "all":
+        return await COMMANDS["add"](args, bot)
+    elif args[0] in COMMANDS:
+        return await COMMANDS[args[0]](args[1:], bot)
