@@ -238,7 +238,7 @@ def makeMessagePart(bot) -> list[str]:
 
 
 async def showRule(args: list[str], bot) -> str | list[str]:
-    pokemonName = "." if len(args) == 0 else formatName(args[0])
+    pokemonName = "." if args[0] == "." else formatName(args[0])
     output = ""
     if pokemonName == ".":
         return makeMessagePart(bot)
